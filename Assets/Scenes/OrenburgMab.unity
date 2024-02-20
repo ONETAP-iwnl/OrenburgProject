@@ -745,8 +745,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   camera: {fileID: 1077817255}
-  assetReference:
-    m_AssetGUID: 6f73101b4229ecf418871ca451acb636
+  assetReferences:
+  - m_AssetGUID: 6f73101b4229ecf418871ca451acb636
     m_SubObjectName: 
     m_SubObjectType: 
     m_EditorAssetChanged: 0
