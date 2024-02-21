@@ -12,7 +12,6 @@ public class Zoom : MonoBehaviour
     List<AddresableObject> addresableObjects;
     List<GameObject> loadGameObjects; //объект который был подгружен при приближении
     [SerializeField] CinemachineVirtualCamera camera; 
-    [SerializeField] List<AssetReferenceGameObject> assetReferences; //сслыка на объект который будет подгружен при приближении.
     Transform centerPoint; //для отслеживания камеры
     bool isZoom = false;
 
@@ -23,6 +22,7 @@ public class Zoom : MonoBehaviour
         centerPoint = GameObject.Find("CenterPoint").transform;
         loadGameObjects = new List<GameObject>();
         addresableObjects = new();
+        _notZoomValue = camera.m_Lens.OrthographicSize;
     }
 
     void Update()
@@ -51,15 +51,18 @@ public class Zoom : MonoBehaviour
         ZoomAction();
     }
 
+    [SerializeField] float zoomValue = 1f; //
+    float _notZoomValue; 
+
     void ZoomAction()
     {
         if (isZoom)
         {
-            camera.m_Lens.OrthographicSize = Mathf.MoveTowards(camera.m_Lens.OrthographicSize, 1, 8 * Time.deltaTime);
+            camera.m_Lens.OrthographicSize = Mathf.MoveTowards(camera.m_Lens.OrthographicSize, zoomValue, 8 * Time.deltaTime);
         }
         else if (!isZoom)
         {
-            camera.m_Lens.OrthographicSize = Mathf.MoveTowards(camera.m_Lens.OrthographicSize, 5, 8 * Time.deltaTime);
+            camera.m_Lens.OrthographicSize = Mathf.MoveTowards(camera.m_Lens.OrthographicSize, _notZoomValue, 8 * Time.deltaTime);
         }
     }
 
