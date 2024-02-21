@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1076982382372722751}
   - component: {fileID: 2930762011067878036}
   m_Layer: 0
-  m_Name: Squere
+  m_Name: AddresablePrefExemp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

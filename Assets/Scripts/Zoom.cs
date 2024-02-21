@@ -9,6 +9,7 @@ using Unity.Burst.CompilerServices;
 public class Zoom : MonoBehaviour
 {
     GameObject selectedObject; //объект на который кликнул игрок
+    List<AddresableObject> addresableObjects;
     List<GameObject> loadGameObjects; //объект который был подгружен при приближении
     [SerializeField] CinemachineVirtualCamera camera; 
     [SerializeField] List<AssetReferenceGameObject> assetReferences; //сслыка на объект который будет подгружен при приближении.
@@ -21,6 +22,7 @@ public class Zoom : MonoBehaviour
     {
         centerPoint = GameObject.Find("CenterPoint").transform;
         loadGameObjects = new List<GameObject>();
+        addresableObjects = new();
     }
 
     void Update()
@@ -28,26 +30,8 @@ public class Zoom : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero); 
         if (hit.collider != null && Input.GetMouseButtonDown(0)) //проверка на попадание по объекту кликом
         {
-            if (loadGameObjects.Count != 0)
-            {
-                foreach (var obj in loadGameObjects)
-                {
-                    Addressables.ReleaseInstance(obj);
-                }
-                //удаление обекта из памяти
-            }
-            selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
 
-            foreach (var reference in assetReferences)
-            {
-                Addressables.LoadAssetsAsync<GameObject>(reference, (gameObj) =>
-                {
-                    Debug.Log(gameObj);
-                });
-
-                reference.InstantiateAsync(selectedObject.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
-            }
-
+            LoadObjects(hit);
 
             camera.Follow = selectedObject.transform; // назнчаание камере цели для преследования
             isZoom = true;
@@ -81,15 +65,33 @@ public class Zoom : MonoBehaviour
 
     void LoadObjects(RaycastHit2D hit) //загрузка обьектов из памяти
     {
-        
-        // В данном коде используется функция addressables.loadassetsasync для асинхронной загрузки gameobject из указанного assetreference
-        // После загрузки gameobject в колбэк-функции gameobj выводится в консоль с помощью debug.log
+        if (loadGameObjects.Count != 0)//удаление обекта из памяти
+        {
+            foreach (var obj in loadGameObjects)
+            {
+                Addressables.ReleaseInstance(obj);
+            }
+
+        }
+
+        selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
+
+        foreach (Transform addObj in selectedObject.GetComponentInChildren<Transform>()) //получение всех обектов с компонентом AddresableObject из дочерних элементов выделеного объекта
+        {
+            if (addObj.tag == "addresablePoint")
+            {
+                addresableObjects.Add(addObj.GetComponent<AddresableObject>());
+            }
+        }
+
+
+        foreach (var reference in addresableObjects) //загрузка префабов из всех дочерних addresableObjects выделеного объекта
+        {
+            reference.assetReference.InstantiateAsync(reference.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
+        }
 
 
 
-        
-        // В данной задаче необходимо использовать функцию InstantiateAsync для инстанциирования объекта в указанной позиции.
-        // После завершения операции инстанцирования, необходимо сохранить результат в лист loadgameobjects.
     }
 
     void DeleteObjects()
@@ -99,6 +101,7 @@ public class Zoom : MonoBehaviour
             foreach (var obj in loadGameObjects)
             {
                 Addressables.ReleaseInstance(obj);
+                addresableObjects.Clear();
             }
             //удаление обекта из памяти
         }
