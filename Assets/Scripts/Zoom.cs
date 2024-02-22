@@ -14,6 +14,7 @@ public class Zoom : MonoBehaviour
     [SerializeField] CinemachineVirtualCamera camera; 
     Transform centerPoint; //для отслеживания камеры
     bool isZoom = false;
+    [SerializeField] List<Transform> regions;
 
     
 
@@ -31,13 +32,14 @@ public class Zoom : MonoBehaviour
         if (hit.collider != null && Input.GetMouseButtonDown(0)) //проверка на попадание по объекту кликом
         {
 
-            LoadObjects(hit);
+            //LoadObjects(hit);
 
+            selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
+            
             camera.Follow = selectedObject.transform; // назнчаание камере цели для преследования
             isZoom = true;
+            StartCoroutine(LoadVisibleObject());
         }
-
-
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -49,9 +51,11 @@ public class Zoom : MonoBehaviour
         }
 
         ZoomAction();
+
     }
 
-    [SerializeField] float zoomValue = 1f; //
+
+    public float zoomValue = 1f; //
     float _notZoomValue; 
 
     void ZoomAction()
@@ -77,7 +81,7 @@ public class Zoom : MonoBehaviour
 
         }
 
-        selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
+        
 
         foreach (Transform addObj in selectedObject.GetComponentInChildren<Transform>()) //получение всех обектов с компонентом AddresableObject из дочерних элементов выделеного объекта
         {
@@ -92,9 +96,6 @@ public class Zoom : MonoBehaviour
         {
             reference.assetReference.InstantiateAsync(reference.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
         }
-
-
-
     }
 
     void DeleteObjects()
@@ -104,9 +105,49 @@ public class Zoom : MonoBehaviour
             foreach (var obj in loadGameObjects)
             {
                 Addressables.ReleaseInstance(obj);
-                addresableObjects.Clear();
+                
             }
             //удаление обекта из памяти
+            addresableObjects.Clear();
+        }
+    }
+
+    public IEnumerator LoadVisibleObject()
+    {
+        while (camera.m_Lens.OrthographicSize != 1)
+        {
+            yield return null;
+        }
+        if (loadGameObjects.Count != 0)//удаление обекта из памяти
+        {
+            foreach (var obj in loadGameObjects)
+            {
+                Addressables.ReleaseInstance(obj);
+                
+            }
+            addresableObjects.Clear();
+        }
+
+
+        foreach (var region in regions)
+        {
+            if (region.GetComponent<Renderer>().isVisible)
+            {
+                foreach (Transform addObj in region.GetComponentInChildren<Transform>()) //получение всех обектов с компонентом AddresableObject из дочерних элементов выделеного объекта
+                {
+                    if (addObj.tag == "addresablePoint")
+                    {
+                        addresableObjects.Add(addObj.GetComponent<AddresableObject>());
+                    }
+                }
+            }
+        }
+       
+
+
+        foreach (var reference in addresableObjects) //загрузка префабов из всех дочерних addresableObjects выделеного объекта
+        {
+            reference.assetReference.InstantiateAsync(reference.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
         }
     }
 }

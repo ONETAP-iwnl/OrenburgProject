@@ -6,5 +6,5 @@ using UnityEngine.ResourceManagement.AsyncOperations;
 
 public class AddresableObject : MonoBehaviour
 {
-    public AssetReference assetReference; //cсылка на объект 
+    public AssetReference assetReference;
 }
