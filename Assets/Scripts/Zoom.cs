@@ -11,10 +11,10 @@ public class Zoom : MonoBehaviour
     GameObject selectedObject; //объект на который кликнул игрок
     List<AddresableObject> addresableObjects;
     List<GameObject> loadGameObjects; //объект который был подгружен при приближении
-    [SerializeField] CinemachineVirtualCamera camera; 
+    [SerializeField] CinemachineVirtualCamera camera;
     Transform centerPoint; //для отслеживания камеры
     bool isZoom = false;
-    [SerializeField] List<Transform> regions;
+    [SerializeField] List<Transform> regions; //список всех регионов
 
     
 
@@ -24,6 +24,10 @@ public class Zoom : MonoBehaviour
         loadGameObjects = new List<GameObject>();
         addresableObjects = new();
         _notZoomValue = camera.m_Lens.OrthographicSize;
+        foreach(Transform reg in GameObject.Find("Regions").GetComponentInChildren<Transform>()) //добавление всех регионов в массив
+        {
+            regions.Add(reg);
+        }
     }
 
     void Update()
@@ -31,13 +35,11 @@ public class Zoom : MonoBehaviour
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero); 
         if (hit.collider != null && Input.GetMouseButtonDown(0)) //проверка на попадание по объекту кликом
         {
-
-            //LoadObjects(hit);
-
             selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
             
             camera.Follow = selectedObject.transform; // назнчаание камере цели для преследования
             isZoom = true;
+
             StartCoroutine(LoadVisibleObject());
         }
 
@@ -55,8 +57,8 @@ public class Zoom : MonoBehaviour
     }
 
 
-    public float zoomValue = 1f; //
-    float _notZoomValue; 
+    public float zoomValue = 1f; //криближение камеры после зума
+    float _notZoomValue; //изначальное приближение камеры
 
     void ZoomAction()
     {
@@ -112,13 +114,14 @@ public class Zoom : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadVisibleObject()
+    public IEnumerator LoadVisibleObject() //куратина, которая загружает все видимые объекты когда камера приближена
     {
-        while (camera.m_Lens.OrthographicSize != 1)
+        while (camera.m_Lens.OrthographicSize != 1) // ожидание приближения
         {
             yield return null;
         }
-        if (loadGameObjects.Count != 0)//удаление обекта из памяти
+
+        if (loadGameObjects.Count != 0)//удаление созданных ранее обектов из памяти
         {
             foreach (var obj in loadGameObjects)
             {
@@ -131,7 +134,7 @@ public class Zoom : MonoBehaviour
 
         foreach (var region in regions)
         {
-            if (region.GetComponent<Renderer>().isVisible)
+            if (region.GetComponent<Renderer>().isVisible) //получение всех видимых регионов
             {
                 foreach (Transform addObj in region.GetComponentInChildren<Transform>()) //получение всех обектов с компонентом AddresableObject из дочерних элементов выделеного объекта
                 {
@@ -145,7 +148,7 @@ public class Zoom : MonoBehaviour
        
 
 
-        foreach (var reference in addresableObjects) //загрузка префабов из всех дочерних addresableObjects выделеного объекта
+        foreach (var reference in addresableObjects) //загрузка префабов из всех дочерних addresableObjects видымого региона
         {
             reference.assetReference.InstantiateAsync(reference.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
         }
