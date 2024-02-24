@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="_Слой_2" data-name="Слой 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 49.36 56.87">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #492100;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4, .cls-5, .cls-6, .cls-7, .cls-8 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-5, .cls-6, .cls-7 {
+        stroke: #d1c382;
+      }
+
+      .cls-1, .cls-3, .cls-5, .cls-6 {
+        stroke-linecap: round;
+      }
+
+      .cls-2 {
+        stroke-width: .25px;
+      }
+
+      .cls-2, .cls-7 {
+        fill: none;
+      }
+
+      .cls-3 {
+        fill: #771b00;
+        stroke: #5c3300;
+      }
+
+      .cls-4 {
+        fill: #925500;
+        stroke: #693700;
+      }
+
+      .cls-9 {
+        fill: #7f4300;
+        stroke-width: 0px;
+      }
+
+      .cls-5 {
+        fill: #e9feff;
+      }
+
+      .cls-6 {
+        fill: #ededed;
+      }
+
+      .cls-7 {
+        stroke-width: .5px;
+      }
+
+      .cls-8 {
+        fill: #692e00;
+        stroke: #5c3800;
+      }
+    </style>
+  </defs>
+  <g id="_Абдулинскаяштука" data-name="Абдулинскаяштука">
+    <g>
+      <polyline class="cls-4" points="47.54 25.13 47.54 56.37 1.79 56.37 1.79 25.13"/>
+      <rect class="cls-8" x="1.79" y="53.4" width="45.75" height="2.98"/>
+      <rect class="cls-9" x="19.66" y="25.87" width="10.01" height="26.78"/>
+      <path class="cls-4" d="M1.79,25.13l8.58-4.91v-4.02c1.91-.3,3.81-.6,5.72-.89V5.49L24.67.58l8.58,4.91v9.82c1.91.3,3.81.6,5.72.89v4.02l8.58,4.91"/>
+      <polygon class="cls-3" points="15.37 5.78 33.96 5.78 24.67 1.32 15.37 5.78"/>
+      <path class="cls-1" d="M21.81,41.49v10.42h5.72v-10.42h-5.72Z"/>
+      <path class="cls-5" d="M22.04,29.59h-.24v7.44h5.56v-7.44h-5.32Z"/>
+      <path class="cls-5" d="M8.78,42.55h-.24v7.44h5.56v-7.44h-5.32Z"/>
+      <path class="cls-5" d="M35.53,30.8h-.24v7.44h5.56v-7.44h-5.32Z"/>
+      <path class="cls-5" d="M35.53,42.7h-.24v7.44h5.56v-7.44h-5.32Z"/>
+      <path class="cls-5" d="M8.47,30.8h-.25v7.44h5.72v-7.44h-5.47Z"/>
+      <ellipse class="cls-6" cx="24.35" cy="9.05" rx="1.35" ry="1.41"/>
+      <line class="cls-7" x1="29.67" y1="25.87" x2="46.83" y2="25.87"/>
+      <line class="cls-7" x1="2.51" y1="25.87" x2="18.23" y2="25.87"/>
+      <path class="cls-3" d="M1.08,25.13h47.18c-2.82-3.22-5.63-6.45-8.45-9.67H9.23L1.08,25.13Z"/>
+      <polygon class="cls-3" points="18.1 28.1 30.38 28.1 24.24 13.22 18.1 28.1"/>
+      <line class="cls-2" x1="46.83" y1="25.87" x2="46.83" y2="52.65"/>
+      <line class="cls-2" x1="2.51" y1="25.87" x2="2.51" y2="52.65"/>
+    </g>
+  </g>
+</svg>
