@@ -29,22 +29,28 @@ public class Zoom : MonoBehaviour
         loadGameObjects = new List<GameObject>();
         addresableObjects = new();
         _notZoomValue = camera.m_Lens.OrthographicSize;
-        //foreach(Transform reg in GameObject.Find("Regions").GetComponentInChildren<Transform>()) //добавление всех регионов в массив
-        //{
-        //    regions.Add(reg);
-        //}
+        foreach (Transform reg in GameObject.Find("Regions").GetComponentInChildren<Transform>()) //добавление всех регионов в массив
+        {
+            regions.Add(reg);
+        }
 
         string filePath = Path.Combine(Application.dataPath, "json.json");
         dataHandler.LoadDataFromJson(filePath);
     }
 
+    [SerializeField] AssetReferenceGameObject testref;  
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            testref.InstantiateAsync(Vector3.zero, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
+        }
+
         RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero); 
         if (hit.collider != null && Input.GetMouseButtonDown(0)) //проверка на попадание по объекту кликом
         {
             selectedObject = hit.collider.gameObject; //выделение объекта по которому произошел клик
-            
+            Debug.Log(selectedObject);
             camera.Follow = selectedObject.transform; // назнчаание камере цели для преследования
             isZoom = true;
 
@@ -53,6 +59,7 @@ public class Zoom : MonoBehaviour
 
             string gameObjectName = hit.collider.gameObject.name;
             dataHandler.UpdateUI(gameObjectName);
+            Debug.Log(gameObjectName);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -129,17 +136,21 @@ public class Zoom : MonoBehaviour
 
     public IEnumerator LoadVisibleObject() //куратина, которая загружает все видимые объекты когда камера приближена
     {
-        while (camera.m_Lens.OrthographicSize != 1) // ожидание приближения
+        Debug.Log("StartCoroutine");
+        while (camera.m_Lens.OrthographicSize != zoomValue) // ожидание приближения
         {
             yield return null;
         }
 
+        //selectedObject.GetComponentInChildren<AddresableObject>().assetReference.InstantiateAsync(selectedObject.transform.position, Quaternion.identity).Completed += (asyncOperation) => loadGameObjects.Add(asyncOperation.Result);
+
+        //Debug.Log(regions[0].GetComponent<Renderer>().isVisible);
         if (loadGameObjects.Count != 0)//удаление созданных ранее обектов из памяти
         {
             foreach (var obj in loadGameObjects)
             {
                 Addressables.ReleaseInstance(obj);
-                
+
             }
             addresableObjects.Clear();
         }
@@ -158,7 +169,7 @@ public class Zoom : MonoBehaviour
                 }
             }
         }
-       
+
 
 
         foreach (var reference in addresableObjects) //загрузка префабов из всех дочерних addresableObjects видымого региона
